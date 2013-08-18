@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dictzip-win32", "dictzip-win32.vcxproj", "{2D51A1D7-2A03-41BD-87D5-F3F625D14AE5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2D51A1D7-2A03-41BD-87D5-F3F625D14AE5}.Debug|Win32.ActiveCfg = Debug|Win32
+		{2D51A1D7-2A03-41BD-87D5-F3F625D14AE5}.Debug|Win32.Build.0 = Debug|Win32
+		{2D51A1D7-2A03-41BD-87D5-F3F625D14AE5}.Release|Win32.ActiveCfg = Release|Win32
+		{2D51A1D7-2A03-41BD-87D5-F3F625D14AE5}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
