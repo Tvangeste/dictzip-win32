@@ -18,7 +18,9 @@
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#ifndef DICTZIP_WIN32
 #include "dictP.h"
+#endif
 
 #include "data.h"
 #include "dictzip.h"
@@ -44,6 +46,7 @@ int mmap_mode = 1; /* dictd uses mmap() function (the default) */
 int mmap_mode = 0;
 #endif
 
+#ifndef DICTZIP_WIN32
 int dict_data_filter( char *buffer, int *len, int maxLength,
 		      const char *filter )
 {
@@ -67,6 +70,7 @@ int dict_data_filter( char *buffer, int *len, int maxLength,
    
    return 0;
 }
+#endif
 
 static int dict_read_header( const char *filename,
 			     dictData *header, int computeCRC )
@@ -83,11 +87,11 @@ static int dict_read_header( const char *filename,
    int           count;
    unsigned long offset;
 
-   if (!(str = fopen( filename, "r" )))
+   if (!(str = fopen( filename, "rb" )))
       err_fatal_errno( __func__,
 		       "Cannot open data file \"%s\" for read\n", filename );
 
-   header->filename     = str_find( filename );
+   header->filename     = filename; // str_find( filename );
    header->headerLength = GZ_XLEN - 1;
    header->type         = DICT_UNKNOWN;
    
@@ -98,7 +102,7 @@ static int dict_read_header( const char *filename,
       header->type = DICT_TEXT;
       fstat( fileno( str ), &sb );
       header->compressedLength = header->length = sb.st_size;
-      header->origFilename     = str_find( filename );
+      header->origFilename     = filename; // str_find( filename );
       header->mtime            = sb.st_mtime;
       if (computeCRC) {
 	 rewind( str );
@@ -175,7 +179,7 @@ static int dict_read_header( const char *filename,
       }
 
       *pt = '\0';
-      header->origFilename = str_find( buffer );
+      header->origFilename = buffer; // str_find( buffer );
       header->headerLength += strlen( header->origFilename ) + 1;
    } else {
       header->origFilename = NULL;
@@ -194,7 +198,7 @@ static int dict_read_header( const char *filename,
       }
 
       *pt = '\0';
-      header->comment = str_find( buffer );
+      header->comment = NULL; // str_find( buffer );
       header->headerLength += strlen( header->comment ) + 1;
    } else {
       header->comment = NULL;

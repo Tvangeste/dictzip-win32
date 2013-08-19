@@ -24,7 +24,9 @@
 
 #include "maa.h"
 #include "zlib.h"
+#ifndef DICTZIP_WIN32
 #include "dictd.h"
+#endif
 
 				/* End of configurable things */
 

@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
     </Filter>
+    <Filter Include="Header Files\posix">
+      <UniqueIdentifier>{03a0a2e7-2fa1-4a7b-a5dc-ca867afa4439}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\posix">
+      <UniqueIdentifier>{1ef96685-2050-4f49-8196-696ac8f777cd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\data.c">
@@ -20,6 +26,15 @@
     </ClCompile>
     <ClCompile Include="src\dictzip.c">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\posix\getopt.c">
+      <Filter>Source Files\posix</Filter>
+    </ClCompile>
+    <ClCompile Include="src\posix\getopt1.c">
+      <Filter>Source Files\posix</Filter>
+    </ClCompile>
+    <ClCompile Include="src\posix\getopt_init.c">
+      <Filter>Source Files\posix</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -31,6 +46,15 @@
     </ClInclude>
     <ClInclude Include="src\maa.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\defs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\posix\getopt_int.h">
+      <Filter>Header Files\posix</Filter>
+    </ClInclude>
+    <ClInclude Include="src\posix\getopt.h">
+      <Filter>Header Files\posix</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -155,10 +155,10 @@ int dict_data_zip( const char *inFilename, const char *outFilename,
 
    
    /* Open files */
-   if (!(inStr = fopen( inFilename, "r" )))
+   if (!(inStr = fopen( inFilename, "rb" )))
       err_fatal_errno( __func__,
 		       "Cannot open \"%s\" for read\n", inFilename );
-   if (!(outStr = fopen( outFilename, "w" )))
+   if (!(outStr = fopen( outFilename, "wb" )))
       err_fatal_errno( __func__,
 		       "Cannot open \"%s\"for write\n", outFilename );
 
@@ -256,11 +256,11 @@ int dict_data_zip( const char *inFilename, const char *outFilename,
 
 	 ++chunk;
 	 total += count;
-	 if (dbg_test( DBG_VERBOSE )) {
+#ifdef _DEBUG
 	    printf( "chunk %5lu: %lu of %lu total\r",
 		    chunk, total, (unsigned long) st.st_size );
 	    xfflush( stdout );
-	 }
+#endif // _DEBUG
       }
    }
    PRINTF(DBG_VERBOSE,("total: %lu chunks, %lu bytes\n", chunks, (unsigned long) st.st_size));
@@ -338,11 +338,13 @@ static const char *id_string (void)
 
 static void banner( void )
 {
-   fprintf( stderr, "%s %s\n", err_program_name (), id_string () );
+   fprintf( stderr, "%s %s\n", "Dictzip", id_string () );
    fprintf( stderr,
 	    "Copyright 1996-2002 Rickard E. Faith (faith@dict.org)\n" );
    fprintf( stderr,
 	    "Copyright 2002-2007 Aleksey Cheusov (vle@gmx.net)\n" );
+   fprintf( stderr,
+        "Copyright 2013 Tvangeste (i.4m.l33t@yandex.ru)\n" );
    fprintf( stderr, "\n" );
 }
 
@@ -384,6 +386,7 @@ static void help( void )
       "-t --test            test compressed file integrity",
       "-v --verbose         verbose mode",
       "-V --version         display version number",
+#ifndef DICTZIP_WIN32
       "-D --debug           select debug option",
       "-s --start <offset>  starting offset for decompression (decimal)",
       "-e --size <offset>   size for decompression (decimal)",
@@ -391,6 +394,7 @@ static void help( void )
       "-E --Size <offset>   size for decompression (base64)",
       "-p --pre <filter>    pre-compression filter",
       "-P --post <filter>   post-compression filter",
+#endif // !DICTZIP_WIN32
       0 };
    const char        **p = help_msg;
 
@@ -409,6 +413,7 @@ int main( int argc, char **argv )
    int           listFlag       = 0;
    int           stdoutFlag     = 0;
    int           testFlag       = 0;
+   int           verboseFlag    = 0;
    char          buffer[BUFFERSIZE];
    char          *buf;
    char          *pre           = NULL;
@@ -443,11 +448,13 @@ int main( int argc, char **argv )
       { 0,              0, 0,  0  }
    };
 
+#ifndef DICTZIP_WIN32
    /* Initialize Libmaa */
    maa_init( argv[0] );
    dbg_register( DBG_VERBOSE, "verbose" );
    dbg_register( DBG_ZIP,     "zip" );
    dbg_register( DBG_UNZIP,   "unzip" );
+#endif
 
    if ((pt = strrchr( argv[0], '/' ))) ++pt;
    else                                pt = argv[0];
@@ -473,15 +480,17 @@ int main( int argc, char **argv )
       case 'L': license(); exit( 1 );                                  break;
       case 'c': ++stdoutFlag;                                          break;
       case 't': ++testFlag;                                            break;
-      case 'v': dbg_set( "verbose" );                                  break;
+      case 'v': ++verboseFlag;                                         break;
       case 'V': banner(); exit( 1 );                                   break;
-      case 'D': dbg_set( optarg );                                     break;
       case 's': ++decompressFlag; clStart = strtoul( optarg, NULL, 10 ); break;
       case 'e': ++decompressFlag; clSize  = strtoul( optarg, NULL, 10 ); break;
-      case 'S': ++decompressFlag; clStart = b64_decode( optarg );        break;
-      case 'E': ++decompressFlag; clSize  = b64_decode( optarg );        break;
+#ifndef DICTZIP_WIN32
+      case 'D': dbg_set( optarg );                                     break;
+      case 'S': ++decompressFlag; clStart = b64_decode( optarg );      break;
+      case 'E': ++decompressFlag; clSize  = b64_decode( optarg );      break;
       case 'p': pre = optarg;                                          break;
       case 'P': post = optarg;                                         break;
+#endif // !DICTZIP_WIN32
       default:  
       case 'h': help(); exit( 1 );                                     break;
       }
@@ -516,14 +525,18 @@ int main( int argc, char **argv )
 	    }
 	    dict_data_close( header );
 	 } else {
-	    strlcpy( filename, argv[i], BUFFERSIZE );
+#ifdef DICTZIP_WIN32
+       strncpy_s( filename, BUFFERSIZE, argv[i], _TRUNCATE );
+#else
+       strlcpy( filename, argv[i], BUFFERSIZE );
+#endif // !DICTZIP_WIN32
 
 	    if ((pt = strrchr( filename, '.' ))) *pt = '\0';
 	    else
 	       err_fatal( __func__, "Cannot truncate filename\n" );
-	    if (!forceFlag && (str = fopen( filename, "r" )))
+	    if (!forceFlag && (str = fopen( filename, "rb" )))
 	       err_fatal( __func__, "%s already exists\n", filename );
-	    if (!(str = fopen( filename, "w" )))
+	    if (!(str = fopen( filename, "wb" )))
 	       err_fatal_errno( __func__,
 				"Cannot open %s for write\n", filename );
 	    header = dict_data_open( argv[i], 0 );
