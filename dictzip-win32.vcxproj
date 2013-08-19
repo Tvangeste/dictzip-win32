@@ -40,10 +40,12 @@
     <LinkIncremental>true</LinkIncremental>
     <LibraryPath>winlibs\lib;$(LibraryPath)</LibraryPath>
     <IntDir>tmp\$(Configuration)\</IntDir>
+    <TargetName>dictzip</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LibraryPath>winlibs\lib;$(LibraryPath)</LibraryPath>
     <IntDir>tmp\$(Configuration)\</IntDir>
+    <TargetName>dictzip</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
