@@ -137,7 +137,7 @@ int dict_data_zip( const char *inFilename, const char *outFilename,
    FILE          *outStr;
    FILE          *inStr;
    int           len;
-   struct stat   st;
+   struct __stat64   st;
    char          *header;
    int           headerLength;
    int           dataLength;
@@ -187,14 +187,23 @@ int dict_data_zip( const char *inFilename, const char *outFilename,
 
    /* Write initial header information */
    chunkLength = (preFilter ? PREFILTER_IN_BUFFER_SIZE : IN_BUFFER_SIZE );
-   fstat( fileno( inStr ), &st );
+   _fstat64( fileno( inStr ), &st );
    chunks = st.st_size / chunkLength;
    if (st.st_size % chunkLength) ++chunks;
    PRINTF(DBG_VERBOSE,("%lu chunks * %u per chunk = %lu (filesize = %lu)\n",
 			chunks, chunkLength, chunks * chunkLength,
 			(unsigned long) st.st_size ));
    dataLength   = chunks * 2;
+
    extraLength  = 10 + dataLength;
+   if (extraLength > 0xFFFF) {
+     fprintf(stderr,"\nFile too long: %u chunks needed, 32762 allowed\n", chunks);
+     fclose(inStr);
+     fclose(outStr);
+     unlink(outFilename);
+     return -1;
+   }
+
    headerLength = GZ_FEXTRA_START
 		  + extraLength		/* FEXTRA */
 		  + strlen( origFilename ) + 1	/* FNAME  */
